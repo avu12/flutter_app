@@ -51,7 +51,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   String path ="";
   void _fetchFromServer() async{
     String something ="aa";
@@ -60,37 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if(response.statusCode == 200){
       setState(() {
         var body = convert.jsonDecode(response.body);
-
         path = Path.fromJson(body).message;
-
-
-
       });
     }
-  }
-  void _incrementCounter2() {
-    setState(() {
-      stderr.writeln('print me');
-      _fetchFromServer();
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-
-    });
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-
-    });
   }
 
 
@@ -139,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter2,
+        onPressed: _fetchFromServer,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
