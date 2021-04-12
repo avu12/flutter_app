@@ -51,19 +51,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String path ="";
-  void _fetchFromServer() async{
-    String something ="aa";
-    var url =  Uri.http("192.168.0.172:32580", "/test/json/$something") ;
+  String path = "";
+  TextEditingController _controller = new TextEditingController();
+  void _fetchFromServer(String p) async {
+    //String something = "aa";
+    var url = Uri.http("192.168.0.172:32580", "/test/json/$p");
     var response = await http.get(url);
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       setState(() {
         var body = convert.jsonDecode(response.body);
         path = Path.fromJson(body).message;
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,15 +102,27 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'You have pushed the button this many times:',
             ),
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter json example path'),
+            ),
             Text(
               '$path',
               style: Theme.of(context).textTheme.headline4,
             ),
+            ElevatedButton(onPressed: () {
+              _fetchFromServer(_controller.text);
+
+            })
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _fetchFromServer,
+        onPressed: () {
+          _fetchFromServer(_controller.text);
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
