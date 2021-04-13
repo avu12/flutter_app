@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_app/testdata.dart';
 
@@ -53,7 +54,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String path = "";
   TextEditingController _controller = new TextEditingController();
-  void _fetchFromServer(String p) async {
+  /*void _fetchFromServer(String p) async {
     //String something = "aa";
     var url = Uri.http("192.168.0.172:32580", "/test/json/$p");
     var response = await http.get(url);
@@ -63,7 +64,19 @@ class _MyHomePageState extends State<MyHomePage> {
         path = Path.fromJson(body).message;
       });
     }
+  }*/
+  Future<http.Response> sendName(String name) {
+    return http.post(
+      Uri.http('192.168.0.172:32580',"/post/json"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'name': name,
+      }),
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headline4,
             ),
             ElevatedButton(onPressed: () {
-              _fetchFromServer(_controller.text);
+              //_fetchFromServer(_controller.text);
+              sendName(_controller.text);
 
             })
           ],
@@ -121,7 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _fetchFromServer(_controller.text);
+          //_fetchFromServer(_controller.text);
+          sendName(_controller.text);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
