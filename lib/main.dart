@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter_app/testdata.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -36,15 +39,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -54,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String path = "";
   TextEditingController _controller = new TextEditingController();
+  TextEditingController _controllerEmail = new TextEditingController();
   /*void _fetchFromServer(String p) async {
     //String something = "aa";
     var url = Uri.http("192.168.0.172:32580", "/test/json/$p");
@@ -65,18 +60,18 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }*/
-  Future<http.Response> sendName(String name) {
+  Future<http.Response> sendData(String name, String email) {
     return http.post(
-      Uri.http('192.168.0.172:32580',"/post/json"),
+      Uri.http('192.168.0.172:32580', "/post/json"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         'name': name,
+        'email': email,
       }),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -112,35 +107,43 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
             TextField(
               controller: _controller,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter json example path'),
+                  border: OutlineInputBorder(), hintText: 'Username'),
             ),
-            Text(
-              '$path',
-              style: Theme.of(context).textTheme.headline4,
+            TextField(
+              controller: _controllerEmail,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), hintText: 'Email'),
             ),
-            ElevatedButton(onPressed: () {
-              //_fetchFromServer(_controller.text);
-              sendName(_controller.text);
-
-            })
+            ElevatedButton(
+                child: Text('Register'),
+                onPressed: () {
+                  //_fetchFromServer(_controller.text);
+                  sendData(_controller.text, _controllerEmail.text);
+                }),
+            TextButton(
+                child: Text('Refresh location'),
+                onPressed: () {
+                  _determinePosition();
+                })
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //_fetchFromServer(_controller.text);
-          sendName(_controller.text);
+          //sendData(_controller.text,_controllerEmail.text);
+          _determinePosition();
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void _determinePosition() async {
+    Position p = await Geolocator.getCurrentPosition();
   }
 }
